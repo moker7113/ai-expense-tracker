@@ -1,26 +1,72 @@
 @import "tailwindcss";
 
+/* 明亮主題：只有淺色 */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --background: #f5f6fa;
+  --foreground: #111827;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --line: #eceef3;
+  --accent: #4f46e5; /* indigo */
+  --accent-2: #7c3aed; /* violet，用於漸層 */
+  --accent-soft: #eef0ff;
+  --expense: #e5484d;
+  --income: #12a150;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-soft: var(--accent-soft);
+  --color-expense: var(--expense);
+  --color-income: var(--income);
+  --font-sans: var(--font-geist-sans), var(--font-noto-tc), "PingFang TC", "Microsoft JhengHei", sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --shadow-soft: 0 1px 2px rgb(17 24 39 / 0.04), 0 8px 24px rgb(17 24 39 / 0.06);
+  --shadow-lift: 0 2px 4px rgb(17 24 39 / 0.04), 0 16px 40px rgb(17 24 39 / 0.1);
+  --shadow-glow: 0 8px 20px rgb(79 70 229 / 0.35);
 }
 
 body {
-  background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* 頂部柔和的彩色光暈 */
+  background:
+    radial-gradient(900px 420px at 0% -8%, #e0e7ff 0%, transparent 60%),
+    radial-gradient(700px 360px at 105% -4%, #fce7f3 0%, transparent 55%),
+    var(--background);
+  background-attachment: fixed;
+  -webkit-tap-highlight-color: transparent;
+  font-feature-settings: "tnum" 0;
+}
+
+/* 主要漸層（按鈕、總覽卡、選中日期） */
+@utility bg-brand {
+  background-image: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+}
+
+/* 隱藏水平日期列的捲軸，但保留滑動 */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+}
+.animate-toast {
+  animation: toast-in 0.25s ease-out;
 }
