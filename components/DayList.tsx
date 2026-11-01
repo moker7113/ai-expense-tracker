@@ -2,7 +2,9 @@ import { categoryIcon, categoryTint } from "@/lib/categories";
 import { money, weekdayOf } from "@/lib/date";
 import type { Item } from "./types";
 
-export default function DayList({ items, loading, date }: { items: Item[]; loading: boolean; date: string }) {
+type Props = { items: Item[]; loading: boolean; date: string; onOpen: (item: Item) => void };
+
+export default function DayList({ items, loading, date, onOpen }: Props) {
   const expense = items.filter((i) => i.type === "expense").reduce((s, i) => s + i.amount, 0);
   const income = items.filter((i) => i.type === "income").reduce((s, i) => s + i.amount, 0);
 
@@ -42,7 +44,11 @@ export default function DayList({ items, loading, date }: { items: Item[]; loadi
       ) : (
         <ul className="space-y-2.5">
           {items.map((item) => (
-            <li key={item._id} className="flex items-center gap-3 rounded-2xl bg-card p-3.5 shadow-soft">
+            <li key={item._id}>
+              <button
+                onClick={() => onOpen(item)}
+                className="flex w-full items-center gap-3 rounded-2xl bg-card p-3.5 text-left shadow-soft transition active:scale-[0.98] active:bg-background"
+              >
               <span
                 className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-xl ${categoryTint(item.category)}`}
               >
@@ -61,6 +67,7 @@ export default function DayList({ items, loading, date }: { items: Item[]; loadi
                 {money(item.amount)}
                 {item.currency !== "TWD" && <span className="ml-1 text-xs font-medium text-muted">{item.currency}</span>}
               </span>
+              </button>
             </li>
           ))}
         </ul>

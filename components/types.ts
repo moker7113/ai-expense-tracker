@@ -8,4 +8,5 @@ export type Item = {
   category: string;
   description: string;
   date: string; // ISO，前 10 碼即 YYYY-MM-DD
+  rawText?: string;
 };

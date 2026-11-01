@@ -6,6 +6,7 @@ import Composer from "@/components/Composer";
 import DateStrip from "@/components/DateStrip";
 import DayList from "@/components/DayList";
 import HeroCard from "@/components/HeroCard";
+import ItemSheet from "@/components/ItemSheet";
 import MonthlyChart from "@/components/MonthlyChart";
 import StatsView from "@/components/StatsView";
 import type { Item } from "@/components/types";
@@ -34,6 +35,7 @@ function Home({ today, user }: { today: string; user: PublicUser }) {
   const [chartMonth, setChartMonth] = useState<number | null>(null); // 年度圖表點選的月份
   const [version, setVersion] = useState(0); // 新增記帳後 +1，觸發重新載入
   const [toast, setToast] = useState("");
+  const [openItem, setOpenItem] = useState<Item | null>(null); // 點開的記帳（顯示詳細 / 刪除）
 
   const monthData = useExpenses(`month=${month}`, version);
   const yearData = useExpenses(tab === "stats" && range === "year" ? `year=${year}` : null, version);
@@ -69,7 +71,17 @@ function Home({ today, user }: { today: string; user: PublicUser }) {
     setMonth(monthOf(target));
     setYear(target.slice(0, 4));
     setVersion((v) => v + 1);
-    setToast(`已新增 ${added.length} 筆`);
+    showToast(`已新增 ${added.length} 筆`);
+  }
+
+  function handleDeleted() {
+    setOpenItem(null);
+    setVersion((v) => v + 1); // 重新載入，總覽與統計一起更新
+    showToast("已刪除");
+  }
+
+  function showToast(msg: string) {
+    setToast(msg);
     setTimeout(() => setToast(""), 2000);
   }
 
@@ -119,7 +131,7 @@ function Home({ today, user }: { today: string; user: PublicUser }) {
         {tab === "list" ? (
           <div className="space-y-5">
             <HeroCard items={monthData.items} label={monthLabel} loading={monthData.loading} />
-            <DayList items={dayItems} loading={monthData.loading} date={selected} />
+            <DayList items={dayItems} loading={monthData.loading} date={selected} onOpen={setOpenItem} />
           </div>
         ) : showYear ? (
           <StatsView items={yearData.items} loading={yearData.loading} label={yearLabel}>
@@ -149,6 +161,8 @@ function Home({ today, user }: { today: string; user: PublicUser }) {
           {toast}
         </div>
       )}
+
+      {openItem && <ItemSheet item={openItem} onClose={() => setOpenItem(null)} onDeleted={handleDeleted} />}
 
       {/* 底部：浮動輸入框 + 分頁列 */}
       <div className="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-md bg-gradient-to-t from-background via-background/95 to-background/0 px-4 pb-[max(env(safe-area-inset-bottom),0.75rem)] pt-6">
